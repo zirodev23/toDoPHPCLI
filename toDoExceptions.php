@@ -16,13 +16,14 @@ $tasks = [
 ];
 
 
-  function showTask($inputTasks) {
-      $id = readline("Ievadi uzdevuma ID: ");
-      // atrast uzdevumu pēc id
-      $task = findTaskById($inputTasks, $id);
-      displayTask($task);
-  }
+function showTask($inputTasks) {
+    $id = readline("Ievadi uzdevuma ID: ");
+    // atrast uzdevumu pēc id
+    $task = findTaskById($inputTasks, $id);
+    displayTask($task);
+}
 
+// !! task can not be changed
 function findTaskById($tasks, $inputId) {
     foreach ($tasks as $task) {
         if ($task['id'] == $inputId) {
@@ -30,6 +31,15 @@ function findTaskById($tasks, $inputId) {
             return $task;
         }
     }
+}
+
+function findTaskIndexById($tasks, $inputId) {
+    foreach ($tasks as $index => $task) {
+        if ($task['id'] == $inputId) {
+            return $index;
+        }
+    }
+    return -1;
 }
 
 function displayTask($task) {
@@ -72,28 +82,19 @@ do {
                 unset($tasks[$id]);
                 break;
             case 4:
-                echo "Rediģēšana tiks izstradāta vēlāk\n";
-                // function edit(&$tasks){
-                    $id = readline("Ievadi uzdevuma ID kur tu grib kaut ko mainit : \n");
-                    $task = findTaskById($tasks, $id);
-                    if (!isset($task)) {
-                        throw new Exception("Uzdevums nevar būt tukšs");
-                    }
-                    displayTask($task);
-                
-                    $newContent = readline("ievadit jaunu contentu : ");
-                    // pārbaudīt ar empty 
-                
-                    $task['content'] = $newContent;
+                $id = readline("Ievadi uzdevuma ID, kuru vēlies mainit: ");
+                $taskIndex = findTaskIndexById($tasks, $id);
 
-                    displayTask($task);
+                if ($taskIndex == -1) {
+                    throw new Exception("Uzdevums nav atrasts\n");
+                }
+            
+                $newContent = readline("Ievadīt jaunu saturu: ");            
+                if (empty($newContent)) {
+                    throw new Exception("Saturs nav ievadīts\n");
+                }
+                $tasks[$taskIndex]['content'] = $newContent;
 
-                    // $tasks[]= [
-                    //     'id'=> 1,
-                    //     'content'=>$newContent,
-                    //     'status'=>'new'
-                    // ];
-                // }
                 break;
             case 5:
                 foreach($tasks as $task) {
